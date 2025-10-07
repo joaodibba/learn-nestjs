@@ -22,7 +22,9 @@ import { RoomsService } from './rooms/rooms.service';
 import { RoomsModule } from './rooms/rooms.module';
 import { EmployeesModule } from './employees/employees.module';
 import { RoomAssignmentsModule } from './room-assignments/room-assignments.module';
-import { ResponseInterceptor } from './response.interceptor';
+import { PaginationService } from './services/pagination.service';
+import { RequestContextService } from './services/request-context.service';
+import { ResourceLinksService } from './services/resource-links.service';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -50,6 +52,9 @@ class HttpExceptionFilter extends BaseExceptionFilter {
   ],
   providers: [
     Logger,
+    RequestContextService,
+    PaginationService,
+    ResourceLinksService,
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
@@ -61,10 +66,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
     },
     RoomsService,
   ],

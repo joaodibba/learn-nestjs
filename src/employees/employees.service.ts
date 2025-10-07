@@ -1,30 +1,70 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../db/database.service';
 import { employees } from '../db/tables';
-import { eq } from 'drizzle-orm';
+import { eq, count } from 'drizzle-orm';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { PaginationQuery } from '../types/pagination.types';
+import { PaginationService } from '../services/pagination.service';
+import { ResourceLinksService } from '../services/resource-links.service';
 
 @Injectable()
 export class EmployeesService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly paginationService: PaginationService,
+    private readonly resourceLinksService: ResourceLinksService,
+  ) {}
 
-  async findAll() {
+  async findAll(pagination?: PaginationQuery) {
     const db = this.databaseService.getDatabase();
-    return await db.query.employees.findMany();
+
+    const page = pagination?.page ?? 1;
+    const limit = pagination?.limit ?? 10;
+    const offset = (page - 1) * limit;
+
+    const [{ total }] = await db.select({ total: count() }).from(employees);
+
+    const rawData = await db.query.employees.findMany({
+      limit,
+      offset,
+    });
+
+    // Transform to resource items with links
+    const data = this.resourceLinksService.transformToResourceItems(rawData, 'employee');
+
+    const meta = this.paginationService.generateMeta(total, page, limit);
+    const links = this.paginationService.generateLinks(meta);
+
+    return {
+      links,
+      data,
+      meta,
+    };
   }
 
   async findOne(id: string) {
     const db = this.databaseService.getDatabase();
-    return await db.query.employees.findFirst({
+    const employee = await db.query.employees.findFirst({
       where: eq(employees.id, id),
     });
+
+    if (!employee) {
+      return null;
+    }
+
+    const data = this.resourceLinksService.transformToResourceItem(employee, 'employee');
+
+    return { data };
   }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
     const db = this.databaseService.getDatabase();
     const [newEmployee] = await db.insert(employees).values(createEmployeeDto).returning();
-    return newEmployee;
+    
+    const data = this.resourceLinksService.transformToResourceItem(newEmployee, 'employee');
+
+    return { data };
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
