@@ -15,10 +15,12 @@ import {
   relatedLink,
   relationship,
 } from '../decorators/resource-links.decorator';
+import { JsonApiType } from '../decorators/jsonapi.decorator';
 
 @ApiTags('rooms')
 @Controller('rooms')
 @UseInterceptors(ResourceLinksInterceptor)
+@JsonApiType('rooms')
 export class RoomsController {
   constructor(
     private readonly roomsService: RoomsService,
