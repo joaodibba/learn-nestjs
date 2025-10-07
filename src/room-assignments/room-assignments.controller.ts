@@ -10,6 +10,7 @@ import {
 import { RoomAssignmentsService } from './room-assignments.service';
 import { CreateRoomAssignmentDto } from './dto/create-room-assignment.dto';
 import { UpdateRoomAssignmentDto } from './dto/update-room-assignment.dto';
+import { UuidParamDto } from 'src/common/dto/uuid.dto';
 
 @Controller('room-assignments')
 export class RoomAssignmentsController {
@@ -28,23 +29,23 @@ export class RoomAssignmentsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.roomAssignmentsService.findOne(id);
+  async findOne(@Param() params: UuidParamDto) {
+    return await this.roomAssignmentsService.findOne(params.id);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param() params: UuidParamDto,
     @Body() updateRoomAssignmentDto: UpdateRoomAssignmentDto,
   ) {
     return await this.roomAssignmentsService.update(
-      id,
+      params.id,
       updateRoomAssignmentDto,
     );
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.roomAssignmentsService.remove(id);
+  async remove(@Param() params: UuidParamDto) {
+    return await this.roomAssignmentsService.remove(params.id);
   }
 }

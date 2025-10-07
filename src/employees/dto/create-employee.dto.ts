@@ -3,10 +3,7 @@ import { createZodDto } from 'nestjs-zod';
 import { employees } from 'src/db/tables';
 import { z } from 'zod';
 
-export const selectEmployeesSchema = createSelectSchema(employees);
-export const insertEmployeesSchema = createInsertSchema(employees);
-
-export const createEmployeeSchema = insertEmployeesSchema
+export const createEmployeeSchema = createInsertSchema(employees)
   .omit({ id: true, createdAt: true })
   .extend({
     name: z.string().min(1).max(100).describe('The name of the employee'),

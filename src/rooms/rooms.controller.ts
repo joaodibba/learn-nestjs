@@ -12,6 +12,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { UuidParamDto } from 'src/common/dto/uuid.dto';
 
 @ApiTags('rooms')
 @Controller('rooms')
@@ -29,10 +30,7 @@ export class RoomsController {
     type: CreateRoomDto,
   })
   async create(@Body() createRoomDto: CreateRoomDto) {
-    this.logger.log('Creating a new room', RoomsController.name);
-    const result = await this.roomsService.create(createRoomDto);
-    this.logger.log('Room created successfully', RoomsController.name);
-    return result;
+    return await this.roomsService.create(createRoomDto);
   }
 
   @Get()
@@ -43,10 +41,7 @@ export class RoomsController {
     type: [CreateRoomDto],
   })
   async findAll() {
-    this.logger.log('Fetching all rooms', RoomsController.name);
-    const result = await this.roomsService.findAll();
-    this.logger.log(`Found ${result.length} rooms`, RoomsController.name);
-    return result;
+    return await this.roomsService.findAll();
   }
 
   @Get(':id')
@@ -56,20 +51,20 @@ export class RoomsController {
     description: 'Room fetched successfully',
     type: CreateRoomDto,
   })
-  async findOne(@Param('id') id: string) {
-    this.logger.log(`Fetching room by ID: ${id}`, RoomsController.name);
-    const result = await this.roomsService.findOne(id);
-    this.logger.log(`Room found: ${id}`, RoomsController.name);
-    return result;
+  async findOne(@Param() params: UuidParamDto) {
+    return await this.roomsService.findOne(params.id);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return await this.roomsService.update(id, updateRoomDto);
+  async update(
+    @Param() params: UuidParamDto,
+    @Body() updateRoomDto: UpdateRoomDto,
+  ) {
+    return await this.roomsService.update(params.id, updateRoomDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.roomsService.remove(id);
+  async remove(@Param() params: UuidParamDto) {
+    return await this.roomsService.remove(params.id);
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { DatabaseService } from '../db/database.service';
 import { roomAssignments } from '../db/tables';
 import { eq } from 'drizzle-orm';
@@ -18,11 +22,28 @@ export class RoomAssignmentsService {
     });
   }
 
+  /**
+   * Find all room assignments for a specific employee by employee ID
+   * @param id - The employee UUID
+   * @returns Array of room assignments for the employee
+   */
   async findOne(id: string) {
     const db = this.databaseService.getDatabase();
-    return await db.query.roomAssignments.findMany({
+    const assignment = await db.query.roomAssignments.findFirst({
       where: eq(roomAssignments.employeeId, id),
+      with: {
+        employee: true,
+        room: true,
+      },
     });
+
+    if (!assignment) {
+      throw new NotFoundException(
+        `No room assignments found for employee with ID: ${id}`,
+      );
+    }
+
+    return assignment;
   }
 
   async create(createRoomAssignmentDto: CreateRoomAssignmentDto) {
@@ -31,6 +52,11 @@ export class RoomAssignmentsService {
       .insert(roomAssignments)
       .values(createRoomAssignmentDto)
       .returning();
+    if (!newRoomAssignment) {
+      throw new BadRequestException(
+        `Failed to create room assignment: ${createRoomAssignmentDto}`,
+      );
+    }
     return newRoomAssignment;
   }
 

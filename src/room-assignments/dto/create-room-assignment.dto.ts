@@ -1,12 +1,9 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
-import { createSelectSchema, createInsertSchema } from 'drizzle-zod';
+import { createInsertSchema } from 'drizzle-zod';
 import { roomAssignments } from 'src/db/tables';
 
-export const selectRoomAssignmentsSchema = createSelectSchema(roomAssignments);
-export const insertRoomAssignmentsSchema = createInsertSchema(roomAssignments);
-
-export const createRoomAssignmentSchema = insertRoomAssignmentsSchema
+export const createRoomAssignmentSchema = createInsertSchema(roomAssignments)
   .omit({ id: true, createdAt: true })
   .extend({
     roomId: z.uuid().describe('The ID of the room'),

@@ -10,6 +10,7 @@ import {
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { UuidParamDto } from 'src/common/dto/uuid.dto';
 
 @Controller('employees')
 export class EmployeesController {
@@ -26,20 +27,20 @@ export class EmployeesController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.employeesService.findOne(id);
+  async findOne(@Param() params: UuidParamDto) {
+    return await this.employeesService.findOne(params.id);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param() params: UuidParamDto,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    return await this.employeesService.update(id, updateEmployeeDto);
+    return await this.employeesService.update(params.id, updateEmployeeDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.employeesService.remove(id);
+  async remove(@Param() params: UuidParamDto) {
+    return await this.employeesService.remove(params.id);
   }
 }
