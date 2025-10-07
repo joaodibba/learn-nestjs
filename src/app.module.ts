@@ -22,7 +22,10 @@ import { RoomsService } from './rooms/rooms.service';
 import { RoomsModule } from './rooms/rooms.module';
 import { EmployeesModule } from './employees/employees.module';
 import { RoomAssignmentsModule } from './room-assignments/room-assignments.module';
-import { ResponseInterceptor } from './response.interceptor';
+import { PaginationService } from './services/pagination.service';
+import { ResourceLinksService } from './services/resource-links.service';
+import { JsonApiInterceptor } from './interceptors/jsonapi.interceptor';
+import { JsonApiErrorFilter } from './filters/jsonapi-error.filter';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -50,6 +53,8 @@ class HttpExceptionFilter extends BaseExceptionFilter {
   ],
   providers: [
     Logger,
+    PaginationService,
+    ResourceLinksService,
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
@@ -59,12 +64,16 @@ class HttpExceptionFilter extends BaseExceptionFilter {
       useClass: ZodSerializerInterceptor,
     },
     {
+      provide: APP_INTERCEPTOR,
+      useClass: JsonApiInterceptor,
+    },
+    {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
     {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
+      provide: APP_FILTER,
+      useClass: JsonApiErrorFilter,
     },
     RoomsService,
   ],

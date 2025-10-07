@@ -5,5 +5,7 @@ export const rooms = pgTable('rooms', {
   roomNumber: text('room_number').notNull().unique(),
   name: text('name').notNull(),
   capacity: integer('capacity').notNull().default(2),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });

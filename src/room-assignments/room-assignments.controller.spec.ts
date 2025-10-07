@@ -11,7 +11,9 @@ describe('RoomAssignmentsController', () => {
       providers: [RoomAssignmentsService],
     }).compile();
 
-    controller = module.get<RoomAssignmentsController>(RoomAssignmentsController);
+    controller = module.get<RoomAssignmentsController>(
+      RoomAssignmentsController,
+    );
   });
 
   it('should be defined', () => {
