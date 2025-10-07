@@ -22,7 +22,6 @@ import { RoomsService } from './rooms/rooms.service';
 import { RoomsModule } from './rooms/rooms.module';
 import { EmployeesModule } from './employees/employees.module';
 import { RoomAssignmentsModule } from './room-assignments/room-assignments.module';
-import { ExamplesModule } from './examples/examples.module';
 import { PaginationService } from './services/pagination.service';
 import { ResourceLinksService } from './services/resource-links.service';
 import { JsonApiInterceptor } from './interceptors/jsonapi.interceptor';
@@ -51,7 +50,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     RoomsModule,
     EmployeesModule,
     RoomAssignmentsModule,
-    ExamplesModule,
   ],
   providers: [
     Logger,

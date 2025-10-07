@@ -178,9 +178,6 @@ export class JsonApiInterceptor implements NestInterceptor {
 
     const document: JsonApiDocument = {
       data: resources,
-      jsonapi: {
-        version: '1.1',
-      },
     };
 
     // Add pagination meta
@@ -248,9 +245,6 @@ export class JsonApiInterceptor implements NestInterceptor {
     meta?: JsonApiMeta,
   ): JsonApiDocument {
     const document: JsonApiDocument = {
-      jsonapi: {
-        version: '1.1',
-      },
       data: data,
     };
 
