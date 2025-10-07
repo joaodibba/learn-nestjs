@@ -10,8 +10,8 @@ export const insertEmployeesSchema = createInsertSchema(employees);
 export const createEmployeeSchema = insertEmployeesSchema
   .omit({ id: true, createdAt: true })
   .extend({
-    name: z.string().min(1).max(100),
-    email: z.email(),
+    name: z.string().min(1).max(100).describe('The name of the employee'),
+    email: z.email().describe('The email of the employee'),
   });
 
 export class CreateEmployeeDto extends createZodDto(createEmployeeSchema) {}

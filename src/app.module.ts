@@ -22,6 +22,8 @@ import { RoomsService } from './rooms/rooms.service';
 import { RoomsModule } from './rooms/rooms.module';
 import { EmployeesModule } from './employees/employees.module';
 import { RoomAssignmentsModule } from './room-assignments/room-assignments.module';
+import { ResponseInterceptor } from './response.interceptor';
+
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
   private logger = new Logger(HttpExceptionFilter.name);
@@ -59,6 +61,10 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
     },
     RoomsService,
   ],

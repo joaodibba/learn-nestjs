@@ -9,9 +9,9 @@ export const insertRoomsSchema = createInsertSchema(rooms);
 export const createRoomSchema = insertRoomsSchema
   .omit({ id: true, createdAt: true })
   .extend({
-    roomNumber: z.string().min(1).max(10),
-    name: z.string().min(1).max(256),
-    capacity: z.number().int().positive().min(1).max(10)
+    roomNumber: z.string().min(1).max(10).describe('The room number identifier'),
+    name: z.string().min(1).max(256).describe('The name of the room'),
+    capacity: z.number().int().positive().min(1).max(10).describe('The maximum capacity of the room')
   });
 
 export class CreateRoomDto extends createZodDto(createRoomSchema) {}

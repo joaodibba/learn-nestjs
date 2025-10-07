@@ -38,7 +38,11 @@ async function bootstrap() {
     ignoreGlobalPrefix: false,
     deepScanRoutes: true,
   });
-  SwaggerModule.setup('/', app, cleanupOpenApiDoc(document));
+  SwaggerModule.setup('/', app, cleanupOpenApiDoc(document), {
+    jsonDocumentUrl: '/swagger.json',
+    yamlDocumentUrl: '/swagger.yaml',
+  });
+
 
   await app.listen(process.env.PORT ?? 3000);
 }
