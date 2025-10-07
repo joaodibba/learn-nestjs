@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PaginationMeta, PaginationLinks, PaginationQuery } from '../types/pagination.types';
+import {
+  PaginationMeta,
+  PaginationLinks,
+  PaginationQuery,
+} from '../types/pagination.types';
 
 @Injectable()
 export class PaginationService {
-
-  generateMeta(
-    total: number,
-    page: number,
-    limit: number,
-  ): PaginationMeta {
+  generateMeta(total: number, page: number, limit: number): PaginationMeta {
     const totalPages = Math.ceil(total / limit);
-    
+
     return {
       total,
       page,
@@ -28,11 +27,11 @@ export class PaginationService {
   ): PaginationLinks {
     const { page, totalPages } = meta;
     const params = new URLSearchParams(additionalParams);
-    
+
     // Get current path from request
     const originalUrl = request.originalUrl || request.url;
     const currentPath = originalUrl.split('?')[0]; // Remove query parameters
-    
+
     const buildUrl = (pageNum: number) => {
       const urlParams = new URLSearchParams(params);
       urlParams.set('page', pageNum.toString());

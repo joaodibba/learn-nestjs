@@ -25,6 +25,46 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+This project implements a **JSON:API v1.1 compliant REST API** with automatic response formatting, pagination, and HATEOAS links.
+
+### Key Features
+
+- ✅ **JSON:API v1.1 Compliance** - All responses follow the JSON:API specification
+- ✅ **Automatic Response Formatting** - Responses are automatically wrapped in JSON:API format
+- ✅ **Pagination Support** - Built-in pagination with proper links and meta information
+- ✅ **Error Handling** - Errors formatted according to JSON:API error specification
+- ✅ **HATEOAS Links** - Automatic generation of hypermedia links
+- ✅ **Resource Relationships** - Support for defining and returning resource relationships
+- ✅ **Customizable** - Easy to customize per endpoint with decorators
+
+For detailed documentation, see [JSON:API Implementation Guide](docs/JSONAPI.md).
+
+### Example Response
+
+```json
+{
+  "jsonapi": {
+    "version": "1.1"
+  },
+  "data": {
+    "type": "rooms",
+    "id": "1",
+    "attributes": {
+      "name": "Conference Room A",
+      "capacity": 10
+    },
+    "links": {
+      "self": "http://localhost:3000/rooms/1",
+      "update": "http://localhost:3000/rooms/1",
+      "delete": "http://localhost:3000/rooms/1"
+    }
+  },
+  "links": {
+    "self": "http://localhost:3000/rooms/1"
+  }
+}
+```
+
 ## Project setup
 
 ```bash

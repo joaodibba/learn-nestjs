@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+} from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { ResourceLinksInterceptor } from '../interceptors/resource-links.interceptor';
 import {
@@ -18,7 +26,6 @@ import {
 @Controller('employees')
 @UseInterceptors(ResourceLinksInterceptor)
 export class ComplexEmployeeController {
-  
   @Get()
   @ResourceLinks([
     selfLink(),
@@ -36,8 +43,18 @@ export class ComplexEmployeeController {
     // Your service logic here
     return {
       data: [
-        { id: '1', name: 'John Doe', email: 'john@example.com', status: 'active' },
-        { id: '2', name: 'Jane Smith', email: 'jane@example.com', status: 'inactive' },
+        {
+          id: '1',
+          name: 'John Doe',
+          email: 'john@example.com',
+          status: 'active',
+        },
+        {
+          id: '2',
+          name: 'Jane Smith',
+          email: 'jane@example.com',
+          status: 'inactive',
+        },
       ],
     };
   }
@@ -129,11 +146,7 @@ export class ComplexEmployeeController {
   }
 
   @Post(':id/room-assignments')
-  @ResourceLinks([
-    selfLink(),
-    updateLink(),
-    deleteLink(),
-  ])
+  @ResourceLinks([selfLink(), updateLink(), deleteLink()])
   @ResourceRelationships([
     relationship('employee', 'employees'),
     relationship('room', 'rooms'),
@@ -156,7 +169,6 @@ export class ComplexEmployeeController {
 @Controller('rooms')
 @UseInterceptors(ResourceLinksInterceptor)
 export class ComplexRoomController {
-  
   @Get(':id')
   @ResourceLinks([
     selfLink(),
@@ -228,7 +240,6 @@ export class ComplexRoomController {
 @Controller('departments')
 @UseInterceptors(ResourceLinksInterceptor)
 export class ComplexDepartmentController {
-  
   @Get(':id')
   @ResourceLinks([
     selfLink(),
@@ -239,7 +250,9 @@ export class ComplexDepartmentController {
       name: 'parent',
       href: (resource, request) => {
         const baseUrl = request.protocol + '://' + request.get('host');
-        return resource.parentId ? `${baseUrl}/departments/${resource.parentId}` : null;
+        return resource.parentId
+          ? `${baseUrl}/departments/${resource.parentId}`
+          : null;
       },
       method: 'GET',
       title: 'Parent Department',

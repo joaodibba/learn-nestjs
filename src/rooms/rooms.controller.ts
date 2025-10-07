@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, Query, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Logger,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -15,10 +26,12 @@ import {
   relatedLink,
   relationship,
 } from '../decorators/resource-links.decorator';
+import { JsonApiType } from '../decorators/jsonapi.decorator';
 
 @ApiTags('rooms')
 @Controller('rooms')
 @UseInterceptors(ResourceLinksInterceptor)
+@JsonApiType('rooms')
 export class RoomsController {
   constructor(
     private readonly roomsService: RoomsService,
@@ -27,12 +40,12 @@ export class RoomsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new room' })
-  @ApiResponse({ status: 201, description: 'Room created successfully', type: CreateRoomDto })
-  @ResourceLinks([
-    selfLink('rooms'),
-    updateLink('rooms'),
-    deleteLink('rooms'),
-  ])
+  @ApiResponse({
+    status: 201,
+    description: 'Room created successfully',
+    type: CreateRoomDto,
+  })
+  @ResourceLinks([selfLink('rooms'), updateLink('rooms'), deleteLink('rooms')])
   @ResourceRelationships([
     relationship('assignments', 'room-assignments'),
     relationship('building', 'buildings'),
@@ -44,8 +57,18 @@ export class RoomsController {
   @Get()
   @ApiOperation({ summary: 'Get all rooms ' })
   @ApiResponse({ status: 200, description: 'Rooms fetched successfully' })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (default: 1)' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page (default: 10, max: 100)' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (default: 10, max: 100)',
+  })
   @ResourceLinks([
     selfLink('rooms'),
     {
@@ -89,11 +112,7 @@ export class RoomsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a room' })
   @ApiResponse({ status: 200, description: 'Room updated successfully' })
-  @ResourceLinks([
-    selfLink('rooms'),
-    updateLink('rooms'),
-    deleteLink('rooms'),
-  ])
+  @ResourceLinks([selfLink('rooms'), updateLink('rooms'), deleteLink('rooms')])
   @ResourceRelationships([
     relationship('assignments', 'room-assignments'),
     relationship('building', 'buildings'),
@@ -105,9 +124,7 @@ export class RoomsController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a room' })
   @ApiResponse({ status: 200, description: 'Room deleted successfully' })
-  @ResourceLinks([
-    selfLink('rooms'),
-  ])
+  @ResourceLinks([selfLink('rooms')])
   async remove(@Param('id') id: string) {
     return await this.roomsService.remove(id);
   }

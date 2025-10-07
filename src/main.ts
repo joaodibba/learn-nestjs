@@ -3,7 +3,10 @@ import { cleanupOpenApiDoc } from 'nestjs-zod';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { WinstonModule, utilities as nestWinstonModuleUtilities } from 'nest-winston';
+import {
+  WinstonModule,
+  utilities as nestWinstonModuleUtilities,
+} from 'nest-winston';
 import * as winston from 'winston';
 
 dotenv.config();
@@ -16,18 +19,21 @@ async function bootstrap() {
           format: winston.format.combine(
             winston.format.timestamp(),
             winston.format.ms(),
-            nestWinstonModuleUtilities.format.nestLike(process.env.APP_NAME ?? 'API', {
-              colors: true,
-              prettyPrint: true,
-              processId: true,
-              appName: true,
-            }),
+            nestWinstonModuleUtilities.format.nestLike(
+              process.env.APP_NAME ?? 'API',
+              {
+                colors: true,
+                prettyPrint: true,
+                processId: true,
+                appName: true,
+              },
+            ),
           ),
         }),
       ],
     }),
   });
-  
+
   const config = new DocumentBuilder()
     .setTitle('Example API')
     .setDescription('Example API description')
@@ -42,7 +48,6 @@ async function bootstrap() {
     jsonDocumentUrl: '/swagger.json',
     yamlDocumentUrl: '/swagger.yaml',
   });
-
 
   await app.listen(process.env.PORT ?? 3000);
 }

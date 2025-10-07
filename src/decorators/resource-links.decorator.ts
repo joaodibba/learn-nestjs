@@ -22,13 +22,15 @@ export const RESOURCE_RELATIONSHIPS_KEY = 'resource_relationships';
 /**
  * Decorator to define resource links for a controller method
  */
-export const ResourceLinks = (links: LinkDefinition[]) => SetMetadata(RESOURCE_LINKS_KEY, links);
+export const ResourceLinks = (links: LinkDefinition[]) =>
+  SetMetadata(RESOURCE_LINKS_KEY, links);
 
 /**
  * Decorator to define resource relationships for a controller method
  */
-export const ResourceRelationships = (relationships: RelationshipDefinition[]) => 
-  SetMetadata(RESOURCE_RELATIONSHIPS_KEY, relationships);
+export const ResourceRelationships = (
+  relationships: RelationshipDefinition[],
+) => SetMetadata(RESOURCE_RELATIONSHIPS_KEY, relationships);
 
 /**
  * Helper function to create a self link
@@ -78,7 +80,7 @@ export const deleteLink = (resourceType?: string): LinkDefinition => ({
 export const relatedLink = (
   name: string,
   resourceType: string,
-  condition?: (resource: any, request: any) => boolean
+  condition?: (resource: any, request: any) => boolean,
 ): LinkDefinition => ({
   name,
   href: (resource: any, request: any) => {
@@ -97,12 +99,13 @@ export const nestedLink = (
   name: string,
   nestedPath: string | ((resource: any) => string),
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' = 'GET',
-  condition?: (resource: any, request: any) => boolean
+  condition?: (resource: any, request: any) => boolean,
 ): LinkDefinition => ({
   name,
   href: (resource: any, request: any) => {
     const baseUrl = getBaseUrl(request);
-    const path = typeof nestedPath === 'function' ? nestedPath(resource) : nestedPath;
+    const path =
+      typeof nestedPath === 'function' ? nestedPath(resource) : nestedPath;
     return `${baseUrl}/${resource.type}/${resource.id}/${path}`;
   },
   method,
@@ -117,14 +120,16 @@ export const relationship = (
   name: string,
   resourceType: string,
   href?: string | ((resource: any, request: any) => string),
-  condition?: (resource: any, request: any) => boolean
+  condition?: (resource: any, request: any) => boolean,
 ): RelationshipDefinition => ({
   name,
   resourceType,
-  href: href || ((resource: any, request: any) => {
-    const baseUrl = getBaseUrl(request);
-    return `${baseUrl}/${resourceType}`;
-  }),
+  href:
+    href ||
+    ((resource: any, request: any) => {
+      const baseUrl = getBaseUrl(request);
+      return `${baseUrl}/${resourceType}`;
+    }),
   condition,
 });
 
