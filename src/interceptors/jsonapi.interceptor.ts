@@ -59,10 +59,11 @@ export class JsonApiInterceptor implements NestInterceptor {
     response: any,
   ): JsonApiDocument {
     // Get resource type from decorator or infer it
-    const resourceType = this.reflector.getAllAndOverride<string>(
-      JSONAPI_TYPE_KEY,
-      [context.getHandler(), context.getClass()],
-    ) || this.inferResourceType(request, data);
+    const resourceType =
+      this.reflector.getAllAndOverride<string>(JSONAPI_TYPE_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ]) || this.inferResourceType(request, data);
 
     // Handle paginated responses
     if (this.isPaginatedResponse(data)) {
@@ -80,7 +81,12 @@ export class JsonApiInterceptor implements NestInterceptor {
       const resources = data.data.map((item: any) =>
         this.transformToResource(item, resourceType),
       );
-      return this.createJsonApiDocument(resources, request, response, data.meta);
+      return this.createJsonApiDocument(
+        resources,
+        request,
+        response,
+        data.meta,
+      );
     }
 
     // Handle direct resource response
@@ -116,7 +122,10 @@ export class JsonApiInterceptor implements NestInterceptor {
     return data && typeof data === 'object' && 'id' in data;
   }
 
-  private transformToResource(item: any, resourceType: string): JsonApiResource {
+  private transformToResource(
+    item: any,
+    resourceType: string,
+  ): JsonApiResource {
     if (!item || typeof item !== 'object') {
       return item;
     }
@@ -162,7 +171,9 @@ export class JsonApiInterceptor implements NestInterceptor {
     request: any,
   ): JsonApiDocument {
     const resources = Array.isArray(data.data)
-      ? data.data.map((item: any) => this.transformToResource(item, resourceType))
+      ? data.data.map((item: any) =>
+          this.transformToResource(item, resourceType),
+        )
       : [];
 
     const document: JsonApiDocument = {
@@ -180,7 +191,9 @@ export class JsonApiInterceptor implements NestInterceptor {
           total: meta.total || 0,
           size: meta.limit || 10,
           number: meta.page || 1,
-          totalPages: meta.totalPages || Math.ceil((meta.total || 0) / (meta.limit || 10)),
+          totalPages:
+            meta.totalPages ||
+            Math.ceil((meta.total || 0) / (meta.limit || 10)),
         },
       };
       document.meta = paginationMeta;
@@ -200,7 +213,7 @@ export class JsonApiInterceptor implements NestInterceptor {
     const { page, limit, totalPages } = meta;
     const baseUrl = this.getBaseUrl(request);
     const path = request.path || request.url.split('?')[0];
-    
+
     const buildUrl = (pageNum: number) => {
       const url = new URL(`${baseUrl}${path}`);
       url.searchParams.set('page', String(pageNum));
@@ -261,7 +274,7 @@ export class JsonApiInterceptor implements NestInterceptor {
     // Try to get from URL path
     const path = request.path || request.url;
     const segments = path.split('/').filter((s: string) => s);
-    
+
     if (segments.length > 0) {
       // Get the first segment as resource type
       return segments[0];

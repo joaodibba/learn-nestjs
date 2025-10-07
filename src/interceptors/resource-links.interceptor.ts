@@ -21,14 +21,13 @@ export class ResourceLinksInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
-    const links = this.reflector.getAllAndOverride<LinkDefinition[]>(RESOURCE_LINKS_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    const relationships = this.reflector.getAllAndOverride<RelationshipDefinition[]>(
-      RESOURCE_RELATIONSHIPS_KEY,
+    const links = this.reflector.getAllAndOverride<LinkDefinition[]>(
+      RESOURCE_LINKS_KEY,
       [context.getHandler(), context.getClass()],
     );
+    const relationships = this.reflector.getAllAndOverride<
+      RelationshipDefinition[]
+    >(RESOURCE_RELATIONSHIPS_KEY, [context.getHandler(), context.getClass()]);
 
     return next.handle().pipe(
       map((data) => {
@@ -38,7 +37,9 @@ export class ResourceLinksInterceptor implements NestInterceptor {
         if (data.data && Array.isArray(data.data)) {
           return {
             ...data,
-            data: data.data.map((item: any) => this.transformResourceItem(item, links, relationships, request)),
+            data: data.data.map((item: any) =>
+              this.transformResourceItem(item, links, relationships, request),
+            ),
           };
         }
 
@@ -46,13 +47,23 @@ export class ResourceLinksInterceptor implements NestInterceptor {
         if (data.data && !Array.isArray(data.data)) {
           return {
             ...data,
-            data: this.transformResourceItem(data.data, links, relationships, request),
+            data: this.transformResourceItem(
+              data.data,
+              links,
+              relationships,
+              request,
+            ),
           };
         }
 
         // Handle direct resource responses
         if (data.type && data.id) {
-          return this.transformResourceItem(data, links, relationships, request);
+          return this.transformResourceItem(
+            data,
+            links,
+            relationships,
+            request,
+          );
         }
 
         return data;
@@ -75,7 +86,11 @@ export class ResourceLinksInterceptor implements NestInterceptor {
 
     // Add relationships if defined
     if (relationships && relationships.length > 0) {
-      resourceItem.relationships = this.generateRelationships(item, relationships, request);
+      resourceItem.relationships = this.generateRelationships(
+        item,
+        relationships,
+        request,
+      );
     }
 
     return resourceItem;
@@ -99,9 +114,10 @@ export class ResourceLinksInterceptor implements NestInterceptor {
       }
 
       // Generate href
-      const href = typeof linkDef.href === 'function' 
-        ? linkDef.href(resource, request) 
-        : linkDef.href;
+      const href =
+        typeof linkDef.href === 'function'
+          ? linkDef.href(resource, request)
+          : linkDef.href;
 
       // Skip if href is null
       if (href === null) {
@@ -137,9 +153,10 @@ export class ResourceLinksInterceptor implements NestInterceptor {
         continue;
       }
 
-      const href = typeof relDef.href === 'function' 
-        ? relDef.href(resource, request) 
-        : relDef.href;
+      const href =
+        typeof relDef.href === 'function'
+          ? relDef.href(resource, request)
+          : relDef.href;
 
       relationships[relDef.name] = {
         links: {
@@ -159,12 +176,12 @@ export class ResourceLinksInterceptor implements NestInterceptor {
     if (item.constructor && item.constructor.name) {
       return item.constructor.name.toLowerCase().replace(/dto$/, '');
     }
-    
+
     // Try to infer from table name or other properties
     if (item.tableName) {
       return item.tableName;
     }
-    
+
     // Fallback to a generic type
     return 'resource';
   }

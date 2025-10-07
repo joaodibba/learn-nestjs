@@ -4,9 +4,9 @@ import { ResourceLinks, ResourceItem } from '../types/pagination.types';
 @Injectable()
 export class ResourceLinksService {
   generateResourceLinks(
-    resourceId: string, 
-    resourceType: string, 
-    request?: any
+    resourceId: string,
+    resourceType: string,
+    request?: any,
   ): ResourceLinks {
     // Use relative URLs for better portability
     const resourcePath = `/${resourceType}/${resourceId}`;
@@ -24,7 +24,7 @@ export class ResourceLinksService {
     request?: any,
   ): ResourceItem<T> {
     const { id, ...attributes } = item;
-    
+
     return {
       type: resourceType,
       id,
@@ -38,6 +38,8 @@ export class ResourceLinksService {
     resourceType: string,
     request?: any,
   ): ResourceItem<T>[] {
-    return items.map(item => this.transformToResourceItem(item, resourceType, request));
+    return items.map((item) =>
+      this.transformToResourceItem(item, resourceType, request),
+    );
   }
 }

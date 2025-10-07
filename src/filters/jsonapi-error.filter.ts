@@ -91,7 +91,11 @@ export class JsonApiErrorFilter implements ExceptionFilter {
             status: String(status),
             title: msg.title || exceptionResponse.error || 'Validation Error',
             detail: msg.detail || msg.message || JSON.stringify(msg),
-            source: msg.source || (msg.property ? { pointer: `/data/attributes/${msg.property}` } : undefined),
+            source:
+              msg.source ||
+              (msg.property
+                ? { pointer: `/data/attributes/${msg.property}` }
+                : undefined),
           });
         }
       });
