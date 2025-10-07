@@ -33,7 +33,26 @@ export class ResourceLinksInterceptor implements NestInterceptor {
       map((data) => {
         if (!data) return data;
 
-        // Handle paginated responses
+        // Handle JSON:API formatted responses (from JsonApiInterceptor)
+        if (data.jsonapi && data.jsonapi.version === '1.1') {
+          if (data.data) {
+            if (Array.isArray(data.data)) {
+              data.data = data.data.map((item: any) =>
+                this.addLinksAndRelationships(item, links, relationships, request),
+              );
+            } else if (typeof data.data === 'object' && data.data !== null) {
+              data.data = this.addLinksAndRelationships(
+                data.data,
+                links,
+                relationships,
+                request,
+              );
+            }
+          }
+          return data;
+        }
+
+        // Handle paginated responses (before JSON:API transformation)
         if (data.data && Array.isArray(data.data)) {
           return {
             ...data,
@@ -43,7 +62,7 @@ export class ResourceLinksInterceptor implements NestInterceptor {
           };
         }
 
-        // Handle single resource responses
+        // Handle single resource responses (before JSON:API transformation)
         if (data.data && !Array.isArray(data.data)) {
           return {
             ...data,
@@ -56,7 +75,7 @@ export class ResourceLinksInterceptor implements NestInterceptor {
           };
         }
 
-        // Handle direct resource responses
+        // Handle direct resource responses (before JSON:API transformation)
         if (data.type && data.id) {
           return this.transformResourceItem(
             data,
@@ -69,6 +88,35 @@ export class ResourceLinksInterceptor implements NestInterceptor {
         return data;
       }),
     );
+  }
+
+  private addLinksAndRelationships(
+    item: any,
+    links?: LinkDefinition[],
+    relationships?: RelationshipDefinition[],
+    request?: any,
+  ): any {
+    if (!item || typeof item !== 'object') {
+      return item;
+    }
+
+    // Only add if it's a JSON:API resource
+    if (item.type && item.id) {
+      const newLinks = this.generateLinks(item, links, request);
+      
+      if (Object.keys(newLinks).length > 0) {
+        item.links = { ...item.links, ...newLinks };
+      }
+
+      if (relationships && relationships.length > 0) {
+        const newRelationships = this.generateRelationships(item, relationships, request);
+        if (newRelationships && Object.keys(newRelationships).length > 0) {
+          item.relationships = { ...item.relationships, ...newRelationships };
+        }
+      }
+    }
+
+    return item;
   }
 
   private transformResourceItem(
