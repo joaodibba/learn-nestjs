@@ -23,7 +23,6 @@ import { RoomsModule } from './rooms/rooms.module';
 import { EmployeesModule } from './employees/employees.module';
 import { RoomAssignmentsModule } from './room-assignments/room-assignments.module';
 import { PaginationService } from './services/pagination.service';
-import { RequestContextService } from './services/request-context.service';
 import { ResourceLinksService } from './services/resource-links.service';
 
 @Catch(HttpException)
@@ -52,7 +51,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
   ],
   providers: [
     Logger,
-    RequestContextService,
     PaginationService,
     ResourceLinksService,
     {

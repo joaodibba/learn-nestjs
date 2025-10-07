@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { RequestContextService } from './request-context.service';
 import { ResourceLinks, ResourceItem } from '../types/pagination.types';
 
 @Injectable()
 export class ResourceLinksService {
-  constructor(private readonly requestContextService: RequestContextService) {}
-
-  generateResourceLinks(resourceId: string, resourceType: string): ResourceLinks {
+  generateResourceLinks(
+    resourceId: string, 
+    resourceType: string, 
+    request?: any
+  ): ResourceLinks {
     // Use relative URLs for better portability
-    const resourcePath = `/${resourceType}s/${resourceId}`;
+    const resourcePath = `/${resourceType}/${resourceId}`;
 
     return {
       self: resourcePath,
@@ -20,6 +21,7 @@ export class ResourceLinksService {
   transformToResourceItem<T>(
     item: T & { id: string },
     resourceType: string,
+    request?: any,
   ): ResourceItem<T> {
     const { id, ...attributes } = item;
     
@@ -27,14 +29,15 @@ export class ResourceLinksService {
       type: resourceType,
       id,
       attributes: attributes as T,
-      links: this.generateResourceLinks(id, resourceType),
+      links: this.generateResourceLinks(id, resourceType, request),
     };
   }
 
   transformToResourceItems<T>(
     items: (T & { id: string })[],
     resourceType: string,
+    request?: any,
   ): ResourceItem<T>[] {
-    return items.map(item => this.transformToResourceItem(item, resourceType));
+    return items.map(item => this.transformToResourceItem(item, resourceType, request));
   }
 }

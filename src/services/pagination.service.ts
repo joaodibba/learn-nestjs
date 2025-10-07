@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PaginationMeta, PaginationLinks, PaginationQuery } from '../types/pagination.types';
-import { RequestContextService } from './request-context.service';
 
 @Injectable()
 export class PaginationService {
-  constructor(private readonly requestContextService: RequestContextService) {}
 
   generateMeta(
     total: number,
@@ -25,13 +23,15 @@ export class PaginationService {
 
   generateLinks(
     meta: PaginationMeta,
+    request: any,
     additionalParams: Record<string, string> = {},
   ): PaginationLinks {
     const { page, totalPages } = meta;
     const params = new URLSearchParams(additionalParams);
     
-    // Get current path from request context
-    const currentPath = this.requestContextService.getCurrentPath();
+    // Get current path from request
+    const originalUrl = request.originalUrl || request.url;
+    const currentPath = originalUrl.split('?')[0]; // Remove query parameters
     
     const buildUrl = (pageNum: number) => {
       const urlParams = new URLSearchParams(params);
