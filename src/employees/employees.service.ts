@@ -23,7 +23,10 @@ export class EmployeesService {
 
   async create(createEmployeeDto: CreateEmployeeDto) {
     const db = this.databaseService.getDatabase();
-    const [newEmployee] = await db.insert(employees).values(createEmployeeDto).returning();
+    const [newEmployee] = await db
+      .insert(employees)
+      .values(createEmployeeDto)
+      .returning();
     return newEmployee;
   }
 

@@ -3,7 +3,6 @@ import { createZodDto } from 'nestjs-zod';
 import { employees } from 'src/db/tables';
 import { z } from 'zod';
 
-
 export const selectEmployeesSchema = createSelectSchema(employees);
 export const insertEmployeesSchema = createInsertSchema(employees);
 

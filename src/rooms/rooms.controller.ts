@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Logger,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -14,7 +23,11 @@ export class RoomsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new room' })
-  @ApiResponse({ status: 201, description: 'Room created successfully', type: CreateRoomDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Room created successfully',
+    type: CreateRoomDto,
+  })
   async create(@Body() createRoomDto: CreateRoomDto) {
     this.logger.log('Creating a new room', RoomsController.name);
     const result = await this.roomsService.create(createRoomDto);
@@ -24,7 +37,11 @@ export class RoomsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all rooms' })
-  @ApiResponse({ status: 200, description: 'Rooms fetched successfully', type: [CreateRoomDto] })
+  @ApiResponse({
+    status: 200,
+    description: 'Rooms fetched successfully',
+    type: [CreateRoomDto],
+  })
   async findAll() {
     this.logger.log('Fetching all rooms', RoomsController.name);
     const result = await this.roomsService.findAll();
@@ -34,7 +51,11 @@ export class RoomsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a room by ID' })
-  @ApiResponse({ status: 200, description: 'Room fetched successfully', type: CreateRoomDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Room fetched successfully',
+    type: CreateRoomDto,
+  })
   async findOne(@Param('id') id: string) {
     this.logger.log(`Fetching room by ID: ${id}`, RoomsController.name);
     const result = await this.roomsService.findOne(id);

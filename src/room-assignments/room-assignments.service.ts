@@ -14,7 +14,7 @@ export class RoomAssignmentsService {
     return await db.query.roomAssignments.findMany({
       with: {
         employee: true,
-      }
+      },
     });
   }
 
@@ -27,7 +27,10 @@ export class RoomAssignmentsService {
 
   async create(createRoomAssignmentDto: CreateRoomAssignmentDto) {
     const db = this.databaseService.getDatabase();
-    const [newRoomAssignment] = await db.insert(roomAssignments).values(createRoomAssignmentDto).returning();
+    const [newRoomAssignment] = await db
+      .insert(roomAssignments)
+      .values(createRoomAssignmentDto)
+      .returning();
     return newRoomAssignment;
   }
 
