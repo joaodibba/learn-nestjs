@@ -11,6 +11,8 @@ import { RoomAssignmentsService } from './room-assignments.service';
 import { CreateRoomAssignmentDto } from './dto/create-room-assignment.dto';
 import { UpdateRoomAssignmentDto } from './dto/update-room-assignment.dto';
 import { UuidParamDto } from 'src/common/dto/uuid.dto';
+import { RoomAssignmentFilterDto } from './dto/room-assignment-filter.dto';
+import { FilterQuery } from 'src/common/decorators/api-filter.decorator';
 
 @Controller('room-assignments')
 export class RoomAssignmentsController {
@@ -24,8 +26,8 @@ export class RoomAssignmentsController {
   }
 
   @Get()
-  async findAll() {
-    return await this.roomAssignmentsService.findAll();
+  async findAll(@FilterQuery() filters?: RoomAssignmentFilterDto) {
+    return await this.roomAssignmentsService.findAll(filters);
   }
 
   @Get(':id')

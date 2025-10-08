@@ -13,6 +13,9 @@ import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { UuidParamDto } from 'src/common/dto/uuid.dto';
+import { FilterQuery } from 'src/common/decorators/api-filter.decorator';
+import { filter } from 'rxjs';
+import { RoomFilterDto } from './dto/room-filter.dto';
 
 @ApiTags('rooms')
 @Controller('rooms')
@@ -40,8 +43,8 @@ export class RoomsController {
     description: 'Rooms fetched successfully',
     type: [CreateRoomDto],
   })
-  async findAll() {
-    return await this.roomsService.findAll();
+  async findAll(@FilterQuery() filters: RoomFilterDto) {
+    return await this.roomsService.findAll(filters);
   }
 
   @Get(':id')

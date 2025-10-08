@@ -8,14 +8,17 @@ import {
   utilities as nestWinstonModuleUtilities,
 } from 'nest-winston';
 import * as winston from 'winston';
+import * as qs from 'qs';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: WinstonModule.createLogger({
       transports: [
         new winston.transports.Console({
+          level: process.env.LOG_LEVEL || 'info',
           format: winston.format.combine(
             winston.format.timestamp(),
             winston.format.ms(),
@@ -33,6 +36,8 @@ async function bootstrap() {
       ],
     }),
   });
+
+  app.set('query parser', (str) => qs.parse(str));
 
   const config = new DocumentBuilder()
     .setTitle('Example API')

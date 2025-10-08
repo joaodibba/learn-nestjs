@@ -11,6 +11,8 @@ import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { UuidParamDto } from 'src/common/dto/uuid.dto';
+import { EmployeeFilterDto } from './dto/employee-filter.dto';
+import { FilterQuery } from 'src/common/decorators/api-filter.decorator';
 
 @Controller('employees')
 export class EmployeesController {
@@ -22,8 +24,8 @@ export class EmployeesController {
   }
 
   @Get()
-  async findAll() {
-    return await this.employeesService.findAll();
+  async findAll(@FilterQuery() filters?: EmployeeFilterDto) {
+    return await this.employeesService.findAll(filters);
   }
 
   @Get(':id')
